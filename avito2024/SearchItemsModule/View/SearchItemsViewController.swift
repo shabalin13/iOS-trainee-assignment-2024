@@ -25,6 +25,12 @@ class SearchItemsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemGreen
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .play, target: self, action: #selector(goToItemDetails))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchItems))
+    }
+    
+    
+    @objc func searchItems() {
+        viewModel.searchItems()
     }
     
     @objc func goToItemDetails(_ sender: UIBarButtonItem) {
