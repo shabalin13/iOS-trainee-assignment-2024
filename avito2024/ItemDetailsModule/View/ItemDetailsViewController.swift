@@ -7,12 +7,16 @@
 
 import UIKit
 
+protocol ItemDetailsViewControllerProtocol: AnyObject {
+    
+}
+
 class ItemDetailsViewController: UIViewController {
     
-    private let viewModel: ItemDetailsViewModelProtocol
+    private let presenter: ItemDetailsPresenterProtocol
     
-    init(viewModel: ItemDetailsViewModelProtocol) {
-        self.viewModel = viewModel
+    init(presenter: ItemDetailsPresenterProtocol) {
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -28,7 +32,11 @@ class ItemDetailsViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        viewModel.backToSearchItems()
+        presenter.backToSearchItems()
     }
 
+}
+
+extension ItemDetailsViewController: ItemDetailsViewControllerProtocol {
+    
 }

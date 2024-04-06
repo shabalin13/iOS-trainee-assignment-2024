@@ -26,8 +26,9 @@ final class ItemDetailsCoordinator: Coordinator, ItemDetailsCoordinatorProtocol 
     
     func start() {
         print("ItemDetailsCoordinator start")
-        let viewModel = ItemDetailsViewModel(coordinator: self)
-        let viewController = ItemDetailsViewController(viewModel: viewModel)
+        let presenter = ItemDetailsPresenter(coordinator: self)
+        let viewController = ItemDetailsViewController(presenter: presenter)
+        presenter.setViewController(viewController: viewController)
         navigationController.pushViewController(viewController, animated: true)
     }
     

@@ -1,5 +1,5 @@
 //
-//  SearchItemsViewModel.swift
+//  SearchItemsPresenter.swift
 //  avito2024
 //
 //  Created by DIMbI4 on 04.04.2024.
@@ -7,25 +7,26 @@
 
 import Dispatch
 
-protocol SearchItemsViewModelProtocol {
-    
-    var coordinator: SearchItemsCoordinatorProtocol? { get }
-    var networkManager: NetworkManagerProtocol { get }
+protocol SearchItemsPresenterProtocol {
     
     func searchItems()
-    
     func goToItemDetails()
     
 }
 
-final class SearchItemsViewModel: SearchItemsViewModelProtocol {
+final class SearchItemsPresenter: SearchItemsPresenterProtocol {
     
-    weak private(set) var coordinator: SearchItemsCoordinatorProtocol?
-    private(set) var networkManager: NetworkManagerProtocol
+    weak private var coordinator: SearchItemsCoordinatorProtocol?
+    weak private var viewController: SearchItemsViewControllerProtocol?
+    private let networkManager: NetworkManagerProtocol
     
     init(coordinator: SearchItemsCoordinatorProtocol) {
         self.coordinator = coordinator
         self.networkManager = NetworkManager()
+    }
+    
+    func setViewController(viewController: SearchItemsViewControllerProtocol) {
+        self.viewController = viewController
     }
     
     func searchItems() {

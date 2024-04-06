@@ -27,8 +27,9 @@ final class SearchItemsCoordinator: Coordinator, SearchItemsCoordinatorProtocol 
     
     func start() {
         print("SearchItemsCoordintor start")
-        let viewModel = SearchItemsViewModel(coordinator: self)
-        let viewController = SearchItemsViewController(viewModel: viewModel)
+        let presenter = SearchItemsPresenter(coordinator: self)
+        let viewController = SearchItemsViewController(presenter: presenter)
+        presenter.setViewController(viewController: viewController)
         navigationController.setViewControllers([viewController], animated: false)
     }
     
