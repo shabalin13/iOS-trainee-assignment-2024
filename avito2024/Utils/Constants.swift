@@ -11,5 +11,6 @@ struct Constants {
     
     static let historyItemKey = "HistoryItemKey"
     static let historyItemCellIdentifier = "HistoryItemCell"
+    static let mediaButtonText = "Показать в Apple"
     
 }

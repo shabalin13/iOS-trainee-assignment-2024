@@ -9,7 +9,7 @@ import UIKit
 
 protocol SearchItemsCoordinatorProtocol: AnyObject {
     
-    func goToItemDetails()
+    func goToItemDetails(selectedMediaType: MediaType, selectedItem: Item)
     func childDidFinish(childCoordinator: Coordinator)
     
 }
@@ -29,12 +29,12 @@ final class SearchItemsCoordinator: Coordinator, SearchItemsCoordinatorProtocol 
         print("SearchItemsCoordinator start")
         let presenter = SearchItemsPresenter(coordinator: self)
         let viewController = SearchItemsViewController(presenter: presenter)
-        presenter.setViewController(view: viewController)
+        presenter.setView(view: viewController)
         navigationController.setViewControllers([viewController], animated: false)
     }
     
-    func goToItemDetails() {
-        let itemDetailsCoordinator = ItemDetailsCoordinator(parentCoordinator: self, navigationController: navigationController)
+    func goToItemDetails(selectedMediaType: MediaType, selectedItem: Item) {
+        let itemDetailsCoordinator = ItemDetailsCoordinator(parentCoordinator: self, navigationController: navigationController, selectedMediaType: selectedMediaType, selectedItem: selectedItem)
         childCoordinators.append(itemDetailsCoordinator)
         itemDetailsCoordinator.start()
     }

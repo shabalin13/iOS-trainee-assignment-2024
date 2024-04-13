@@ -27,29 +27,33 @@ struct Item {
     let artworkURL: URL?
     
     let primaryGenreName: String?
-    //    let country: String?
     
     let trackExplicitness: Bool?
-    //    let collectionExplicitness: String?
     
     let releaseDate: Date?
     
+    let contentAdvisoryRating: String?
+    let longDescription: String?
+    let collectionArtistId: Int?
+    
     let trackTime: Int?
     
+    let description: String?
+    let genres: [String]?
+    let fileSize: Int?
     let userRatingCount: Int?
     let averageUserRating: Double?
     
     enum CodingKeys: String, CodingKey {
         case wrapperType, kind
         case artistId, artistName, artistViewURL = "artistViewUrl"
-        //        case collectionId, collectionName, collectionViewURL = "collectionViewUrl"
         case trackId, trackName, trackViewURL = "trackViewUrl"
         case artworkURL = "artworkUrl100"
-        case primaryGenreName /*, country*/
-        case trackExplicitness /*, collectionExplicitness*/
-        case releaseDate
+        case primaryGenreName
+        case trackExplicitness
+        case releaseDate, contentAdvisoryRating, longDescription, collectionArtistId
         case trackTime = "trackTimeMillis"
-        case userRatingCount, averageUserRating
+        case description, genres, fileSize = "fileSizeBytes", userRatingCount, averageUserRating
     }
     
 }
@@ -84,9 +88,16 @@ extension Item: Decodable {
         } else {
             releaseDate = nil
         }
-
+        
+        contentAdvisoryRating = try container.decodeIfPresent(String.self, forKey: .contentAdvisoryRating)
+        longDescription = try container.decodeIfPresent(String.self, forKey: .longDescription)
+        collectionArtistId = try container.decodeIfPresent(Int.self, forKey: .collectionArtistId)
+        
         trackTime = try container.decodeIfPresent(Int.self, forKey: .trackTime)
 
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        genres = try container.decodeIfPresent([String].self, forKey: .genres)
+        fileSize = try container.decodeIfPresent(Int.self, forKey: .fileSize)
         userRatingCount = try container.decodeIfPresent(Int.self, forKey: .userRatingCount)
         averageUserRating = try container.decodeIfPresent(Double.self, forKey: .averageUserRating)
                 

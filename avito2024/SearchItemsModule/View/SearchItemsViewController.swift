@@ -62,17 +62,17 @@ class SearchItemsViewController: UIViewController {
     }
     
     // MARK: - ViewController lifecycle methods
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        //        setupView()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        //        setupView()
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
-    // MARK: - Setup methods
+    // MARK: - Setup view methods
     private func setupView() {
         view.backgroundColor = .systemBackground
         setupCollectionView()
@@ -115,6 +115,7 @@ class SearchItemsViewController: UIViewController {
     
     private func setupNavigationBar() {
         navigationItem.title = "Медиа-контент"
+        navigationItem.backButtonTitle = "Back"
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "slider.horizontal.3"), style: .plain, target: self, action: #selector(goToFilters))
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -284,7 +285,7 @@ extension SearchItemsViewController: UICollectionViewDelegate {
             cell.alpha = 0.5
             cell.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }) { _ in
-            self.presenter.goToItemDetails(itemIdx: indexPath.item)
+            self.presenter.goToItemDetails(selectedItemIdx: indexPath.item)
             UIView.animate(withDuration: 0.2) {
                 cell.alpha = 1.0
                 cell.transform = .identity

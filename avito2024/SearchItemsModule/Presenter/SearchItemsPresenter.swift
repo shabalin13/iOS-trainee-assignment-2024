@@ -17,7 +17,7 @@ protocol SearchItemsPresenterProtocol {
     func resetSearchItems()
     func getHistoryItems(term: String?)
     func getSearchItemsParameters()
-    func goToItemDetails(itemIdx: Int)
+    func goToItemDetails(selectedItemIdx: Int)
     
 }
 
@@ -38,7 +38,7 @@ final class SearchItemsPresenter {
     }
     
     // MARK: - Methods
-    func setViewController(view: SearchItemsViewControllerProtocol) {
+    func setView(view: SearchItemsViewControllerProtocol) {
         self.view = view
     }
     
@@ -50,27 +50,6 @@ final class SearchItemsPresenter {
         allHistoryItems.append(term)
         UserDefaults.standard.set(allHistoryItems, forKey: Constants.historyItemKey)
     }
-    
-//    private func prepareItems(items: [Item]) -> [DisplayedItem] {
-//        var displayedItems = [DisplayedItem]()
-//        for item in items {
-//            switch currentSearchItemsParameters.mediaType {
-//            case .music:
-//                displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, explicit: item.trackExplicitness ?? false, authorName: item.artistName ?? "Unknown", trackTime: getTimeString(milliseconds: item.trackTime)))
-//            case .movie:
-//                let dateFormatter = DateFormatter()
-//                dateFormatter.dateFormat = "MMM dd, yyyy"
-//                if let releaseDate = item.releaseDate {
-//                    displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, releaseDate: dateFormatter.string(from: releaseDate), primaryGenreName: item.primaryGenreName ?? ""))
-//                } else {
-//                    displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, releaseDate: "", primaryGenreName: item.primaryGenreName ?? ""))
-//                }
-//            case .ebook:
-//                displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, authorName: item.artistName ?? "Unknown", userRatingCount: String(item.userRatingCount ?? 0), averageUserRating: String(item.averageUserRating ?? 0)))
-//            }
-//        }
-//        return displayedItems
-//    }
     
     private func prepareItems(items: [Item]) -> [DisplayedItem] {
         var displayedItems = [DisplayedItem]()
@@ -270,10 +249,9 @@ extension SearchItemsPresenter: SearchItemsPresenterProtocol {
         self.view?.showFiltersView(displayedParameters: displayedParameters)
     }
     
-    func goToItemDetails(itemIdx: Int) {
+    func goToItemDetails(selectedItemIdx: Int) {
         guard let currentItems = currentItems else { return }
-        print(currentItems.results[itemIdx])
-        coordinator?.goToItemDetails()
+        coordinator?.goToItemDetails(selectedMediaType: currentSearchItemsParameters.mediaType, selectedItem: currentItems.results[selectedItemIdx])
     }
     
 }

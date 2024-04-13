@@ -18,17 +18,21 @@ final class ItemDetailsCoordinator: Coordinator, ItemDetailsCoordinatorProtocol 
     private(set) var parentCoordinator: Coordinator?
     private(set) var childCoordinators: [Coordinator] = []
     private(set) var navigationController: UINavigationController
+    private let selectedItem: Item
+    private let selectedMediaType: MediaType
     
-    init(parentCoordinator: Coordinator, navigationController: UINavigationController) {
+    init(parentCoordinator: Coordinator, navigationController: UINavigationController, selectedMediaType: MediaType, selectedItem: Item) {
         self.parentCoordinator = parentCoordinator
         self.navigationController = navigationController
+        self.selectedMediaType = selectedMediaType
+        self.selectedItem = selectedItem
     }
     
     func start() {
         print("ItemDetailsCoordinator start")
-        let presenter = ItemDetailsPresenter(coordinator: self)
+        let presenter = ItemDetailsPresenter(coordinator: self, selectedMediaType: selectedMediaType, selectedItem: selectedItem)
         let viewController = ItemDetailsViewController(presenter: presenter)
-        presenter.setViewController(viewController: viewController)
+        presenter.setView(view: viewController)
         navigationController.pushViewController(viewController, animated: true)
     }
     
