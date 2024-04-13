@@ -13,6 +13,7 @@ enum NetworkManagerError: Error, LocalizedError {
     case statusCodeFailed
     case requestFailed
     case getDataFailed
+    case noInternetConnection
     
     var localizedDescription: String {
         switch self {
@@ -24,6 +25,8 @@ enum NetworkManagerError: Error, LocalizedError {
             return NSLocalizedString("Request failed", comment: "")
         case .getDataFailed:
             return NSLocalizedString("Failed to get data", comment: "")
+        case .noInternetConnection:
+            return NSLocalizedString("No Internet connection", comment: "")
         }
     }
     

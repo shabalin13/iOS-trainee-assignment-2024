@@ -27,7 +27,7 @@ class ItemDetailsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemRed
+        view.backgroundColor = .systemBackground
     }
     
     override func viewDidDisappear(_ animated: Bool) {

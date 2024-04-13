@@ -38,7 +38,7 @@ final class ItemDetailsCoordinator: Coordinator, ItemDetailsCoordinatorProtocol 
     }
     
     deinit {
-        print("ItemDetailsCoorditor deinit")
+        print("ItemDetailsCoordinator deinit")
     }
     
 }

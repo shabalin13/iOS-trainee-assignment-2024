@@ -6,44 +6,273 @@
 //
 
 import Dispatch
+import Foundation
 
 protocol SearchItemsPresenterProtocol {
     
-    func searchItems()
-    func goToItemDetails()
+    func searchItems(term: String)
+    func searchItems(selectedParameters: [String])
+    func fetchItemImage(url: URL?, completionHandler: @escaping (Data) -> Void)
+    func refreshSearchItems()
+    func resetSearchItems()
+    func getHistoryItems(term: String?)
+    func getSearchItemsParameters()
+    func goToItemDetails(itemIdx: Int)
     
 }
 
-final class SearchItemsPresenter: SearchItemsPresenterProtocol {
+final class SearchItemsPresenter {
     
+    // MARK: - Properties
     weak private var coordinator: SearchItemsCoordinatorProtocol?
-    weak private var viewController: SearchItemsViewControllerProtocol?
+    weak private var view: SearchItemsViewControllerProtocol?
     private let networkManager: NetworkManagerProtocol
     
+    private var currentSearchItemsParameters = SearchItemsParameters()
+    private var currentItems: Items?
+    
+    // MARK: - Initializers
     init(coordinator: SearchItemsCoordinatorProtocol) {
         self.coordinator = coordinator
         self.networkManager = NetworkManager()
     }
     
-    func setViewController(viewController: SearchItemsViewControllerProtocol) {
-        self.viewController = viewController
+    // MARK: - Methods
+    func setViewController(view: SearchItemsViewControllerProtocol) {
+        self.view = view
     }
     
-    func searchItems() {
+    private func saveTerm(term: String) {
+        var allHistoryItems = UserDefaults.standard.stringArray(forKey: Constants.historyItemKey) ?? []
+        if let idx = allHistoryItems.firstIndex(of: term) {
+            allHistoryItems.remove(at: idx)
+        }
+        allHistoryItems.append(term)
+        UserDefaults.standard.set(allHistoryItems, forKey: Constants.historyItemKey)
+    }
+    
+//    private func prepareItems(items: [Item]) -> [DisplayedItem] {
+//        var displayedItems = [DisplayedItem]()
+//        for item in items {
+//            switch currentSearchItemsParameters.mediaType {
+//            case .music:
+//                displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, explicit: item.trackExplicitness ?? false, authorName: item.artistName ?? "Unknown", trackTime: getTimeString(milliseconds: item.trackTime)))
+//            case .movie:
+//                let dateFormatter = DateFormatter()
+//                dateFormatter.dateFormat = "MMM dd, yyyy"
+//                if let releaseDate = item.releaseDate {
+//                    displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, releaseDate: dateFormatter.string(from: releaseDate), primaryGenreName: item.primaryGenreName ?? ""))
+//                } else {
+//                    displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, releaseDate: "", primaryGenreName: item.primaryGenreName ?? ""))
+//                }
+//            case .ebook:
+//                displayedItems.append(DisplayedItem(contentName: item.trackName ?? "Unknown", imageURL: item.artworkURL, authorName: item.artistName ?? "Unknown", userRatingCount: String(item.userRatingCount ?? 0), averageUserRating: String(item.averageUserRating ?? 0)))
+//            }
+//        }
+//        return displayedItems
+//    }
+    
+    private func prepareItems(items: [Item]) -> [DisplayedItem] {
+        var displayedItems = [DisplayedItem]()
+        for item in items {
+            let secondaryLabelText: String
+            let descriptionLabelText: String
+            let explicit: Bool?
+            switch currentSearchItemsParameters.mediaType {
+            case .music:
+                secondaryLabelText = item.artistName ?? "Unknown"
+                if let trackTime = item.trackTime {
+                    descriptionLabelText = "\(MediaType.music.rawValue) • \(getTimeString(milliseconds: trackTime))"
+                } else {
+                    descriptionLabelText = "\(MediaType.music.rawValue)"
+                }
+                explicit = item.trackExplicitness ?? false
+            case .movie:
+                if let genre = item.primaryGenreName {
+                    secondaryLabelText = "\(MediaType.movie.rawValue) • \(genre)"
+                } else {
+                    secondaryLabelText = "\(MediaType.movie.rawValue)"
+                }
+                if let releaseDate = item.releaseDate {
+                    descriptionLabelText = "\(getDateString(date: releaseDate))"
+                } else {
+                    descriptionLabelText = ""
+                }
+                explicit = nil
+            case .ebook:
+                secondaryLabelText = item.artistName ?? "Unknown"
+                if let userRatingCount = item.userRatingCount, let averageUserRating = item.averageUserRating {
+                    descriptionLabelText = "\(MediaType.ebook.rawValue) • ★ \(averageUserRating) (\(userRatingCount))"
+                } else {
+                    descriptionLabelText = "\(MediaType.ebook.rawValue)"
+                }
+                explicit = nil
+            }
+            displayedItems.append(DisplayedItem(contentNameLabelText: item.trackName ?? "Unknown", secondaryLabelText: secondaryLabelText, descriptionLabelText: descriptionLabelText, explicit: explicit, imageURL: item.artworkURL))
+        }
+        return displayedItems
+    }
+    
+    private func getTimeString(milliseconds: Int) -> String {
+        let totalSeconds = milliseconds / 1000
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    private func getDateString(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy"
+        return dateFormatter.string(from: date)
+    }
+    
+}
+
+// MARK: - SearchItemsPresenterProtocol
+extension SearchItemsPresenter: SearchItemsPresenterProtocol {
+    
+    func searchItems(term: String) {
+        DispatchQueue.main.async {
+            self.view?.startActivityIndicator()
+        }
         DispatchQueue.global().async {
-            let itemParameters = ItemParameters(term: "Harry-Potter")
-            self.networkManager.searchItems(itemParameters: itemParameters) { result in
+            self.saveTerm(term: term)
+            self.currentSearchItemsParameters.term = term
+            self.networkManager.searchItems(searchItemsParameters: self.currentSearchItemsParameters) { result in
                 switch result {
                 case .success(let items):
-                    print(items)
+                    self.currentItems = items
+                    let displayedItems = self.prepareItems(items: items.results)
+                    DispatchQueue.main.async {
+                        self.view?.stopActivityIndicator()
+                        self.view?.updateSearchItems(items: displayedItems)
+                    }
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self.view?.stopActivityIndicator()
+                        self.view?.showErrorAlert(error: error)
+                    }
                 }
             }
         }
     }
     
-    func goToItemDetails() {
+    func searchItems(selectedParameters: [String]) {
+        if selectedParameters.count == 4 {
+            if let mediaType = MediaType(rawValue: selectedParameters[0]) {
+                currentSearchItemsParameters.mediaType = mediaType
+            }
+            if let explicit = Explicit(rawValue: selectedParameters[1]) {
+                currentSearchItemsParameters.explicit = explicit
+            }
+            if let country = Country(rawValue: selectedParameters[2]) {
+                currentSearchItemsParameters.country = country
+            }
+            if let limit = Limit(rawValue: selectedParameters[3]) {
+                currentSearchItemsParameters.limit = limit
+            }
+        }
+        if currentSearchItemsParameters.term != "" {
+            DispatchQueue.main.async {
+                self.view?.startActivityIndicator()
+            }
+            DispatchQueue.global().async {
+                self.networkManager.searchItems(searchItemsParameters: self.currentSearchItemsParameters) { result in
+                    switch result {
+                    case .success(let items):
+                        self.currentItems = items
+                        let displayedItems = self.prepareItems(items: items.results)
+                        DispatchQueue.main.async {
+                            self.view?.stopActivityIndicator()
+                            self.view?.updateSearchItems(items: displayedItems)
+                        }
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            self.view?.stopActivityIndicator()
+                            self.view?.showErrorAlert(error: error)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func fetchItemImage(url: URL?, completionHandler: @escaping (Data) -> Void) {
+        DispatchQueue.global().async {
+            if let url = url {
+                self.networkManager.fetchItemImage(url: url) { result in
+                    if case .success(let imageData) = result {
+                        DispatchQueue.main.async {
+                            completionHandler(imageData)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func refreshSearchItems() {
+        if currentSearchItemsParameters.term != "" {
+            DispatchQueue.global().async {
+                self.networkManager.searchItems(searchItemsParameters: self.currentSearchItemsParameters) { result in
+                    switch result {
+                    case .success(let items):
+                        self.currentItems = items
+                        let displayedItems = self.prepareItems(items: items.results)
+                        DispatchQueue.main.async {
+                            self.view?.stopRefreshControl()
+                            self.view?.updateSearchItems(items: displayedItems)
+                        }
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            self.view?.stopRefreshControl()
+                            self.view?.showErrorAlert(error: error)
+                        }
+                    }
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.view?.stopRefreshControl()
+            }
+        }
+    }
+    
+    func resetSearchItems() {
+        currentSearchItemsParameters = SearchItemsParameters()
+        currentItems = nil
+        view?.updateSearchItems(items: [])
+        view?.resetView()
+    }
+    
+    func getHistoryItems(term: String?) {
+        guard let term = term else {
+            self.view?.updateHistoryItems(historyItems: [])
+            return
+        }
+        let allHistoryItems = UserDefaults.standard.stringArray(forKey: Constants.historyItemKey) ?? []
+        let historyItems: [HistoryItem]
+        if term == "" {
+            historyItems = Array<HistoryItem>(allHistoryItems.suffix(5).reversed())
+        } else {
+            historyItems = Array<HistoryItem>(allHistoryItems.filter { $0.lowercased().contains(term.lowercased()) }.suffix(5).reversed())
+        }
+        self.view?.updateHistoryItems(historyItems: historyItems)
+    }
+    
+    func getSearchItemsParameters() {
+        let displayedParameters: [DisplayedParameter] = [
+            DisplayedParameter(title: "Тип медиа-контента", allCases: MediaType.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.mediaType.rawValue),
+            DisplayedParameter(title: "Включать откровенный контент", allCases: Explicit.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.explicit.rawValue),
+            DisplayedParameter(title: "Страна магазина", allCases: Country.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.country.rawValue),
+            DisplayedParameter(title: "Лимит количества результатов", allCases: Limit.allCases.map( { $0.rawValue }), selected: currentSearchItemsParameters.limit.rawValue),
+        ]
+        self.view?.showFiltersView(displayedParameters: displayedParameters)
+    }
+    
+    func goToItemDetails(itemIdx: Int) {
+        guard let currentItems = currentItems else { return }
+        print(currentItems.results[itemIdx])
         coordinator?.goToItemDetails()
     }
     

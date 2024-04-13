@@ -26,10 +26,10 @@ final class SearchItemsCoordinator: Coordinator, SearchItemsCoordinatorProtocol 
     }
     
     func start() {
-        print("SearchItemsCoordintor start")
+        print("SearchItemsCoordinator start")
         let presenter = SearchItemsPresenter(coordinator: self)
         let viewController = SearchItemsViewController(presenter: presenter)
-        presenter.setViewController(viewController: viewController)
+        presenter.setViewController(view: viewController)
         navigationController.setViewControllers([viewController], animated: false)
     }
     
