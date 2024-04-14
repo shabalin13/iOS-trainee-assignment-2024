@@ -25,14 +25,13 @@
 </ol>
 
 
-
-## О проекте
 <a id="about-the-project"></a>
+## О проекте
 
 iOS приложение для поиска медиа-контента и просмотра детальной информации с использованием [iTunes Search API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html#//apple_ref/doc/uid/TP40017632-CH3-SW1). 
 Разработано в качестве [тестового задания](https://github.com/avito-tech/iOS-trainee-assignment-2024) на позицию iOS стажера в Авито.
 
-
+<a id="technologies-used"></a>
 ### Использованные технологии
 
 * [iTunes Search API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html#//apple_ref/doc/uid/TP40017632-CH3-SW1)
@@ -42,7 +41,7 @@ iOS приложение для поиска медиа-контента и пр
 * GCD для многопоточности
 * MVP архитектура с Coordinator
 
-
+<a id="getting-started"></a>
 ## Инструкция по запуску
 
 1) Склонируйте репозиторий
@@ -52,11 +51,14 @@ iOS приложение для поиска медиа-контента и пр
 2) Откройте и запустите проект на симуляторе или физическом iPhone
 3) Наслаждайтесь приложением
 
+<a id="requirements"></a>
 ### Требования
 * iOS 13.0 или выше
 
+<a id="description-and-demo-screens"></a>
 ## Описание и Демо-скрины
 
+<a id="search-media-content-screen"></a>
 ### Экран поиска медиа-контента
 Экран, на котором у пользователя есть возможность выполнить поиск медиа-контента по строковому запросу. При вводе строкового запроса в поле поиска изначально отображаются последние 5 запросов. По мере ввода отображаются подсказки на основе введенного значения (подсказки берутся из истории запросов). 
 
@@ -103,6 +105,7 @@ P.S. Внутри приложения также к запросу добавл
 <img style="display: block; margin-left: auto; margin-right: auto; width: 100%;" src="./Screenshots/Screens1.png" alt="SearchItems"/>
 
 
+<a id="media-content-detail-screen"></a>
 ### Экран с детальной информацией о контенте
 Выбрав нужный контент, пользователь попадает на экран с расширенной информацией о выбранном медиа-контенте. Отображаемая информация различается в зависимости от типа контента. 
 
@@ -148,7 +151,7 @@ P.S. Внутри приложения также к запросу добавл
 
 <img style="display: block; margin-left: auto; margin-right: auto; width: 70%;" src="./Screenshots/Screens2.png" alt="ItemDetails"/>
 
-
+<a id="additional-functionality"></a>
 ### Дополнительно:
 Также в приложении:
 * Реализовано отображение светлой и темной тем в зависимости от режима на устройстве
@@ -157,11 +160,11 @@ P.S. Внутри приложения также к запросу добавл
 
 <img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="./Screenshots/Screens3.png" alt="AdditionalFunctionality"/>
 
-
-
+<a id="demo-video"></a>
 ### Демо-видео
 Вы можете посмотреть видео-демонстрацию приложения в [Google Drive]().
 
+<a id="questions-and-issues"></a>
 ## Вопросы/Проблемы
 Все проблемы, с которыми я столкнулся были связаны с [iTunes Search API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html#//apple_ref/doc/uid/TP40017632-CH3-SW1).
 У API совсем нет нормальной документации. Документация, которая там есть, не соответствует реальной ее работе.
@@ -173,7 +176,7 @@ P.S. Внутри приложения также к запросу добавл
 * Нет запроса сразу на несколько выбранных Медиа Типов (либо все сразу, либо по 1 типу). Можно было сделать несколько запросов с разными типами, но тогда ломается Лимит на количество результатов и не понятно как объединять их вместе. Поэтому пришлось отказаться от идеи запрашивать контент с нескольким типами одновременно.
 * Большинство Entity чаще всего дают либо 1 результат, либо вообще ничего, поэтому использовал только те, которые действительно полезны.
  
-
+<a id="contacts"></a>
 ## Контакты
 
 * Dmitrii Shabalin
