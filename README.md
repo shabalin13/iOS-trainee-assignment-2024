@@ -27,6 +27,7 @@
 
 
 ## О проекте
+<a id="about-the-project"></a>
 
 iOS приложение для поиска медиа-контента и просмотра детальной информации с использованием [iTunes Search API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html#//apple_ref/doc/uid/TP40017632-CH3-SW1). 
 Разработано в качестве [тестового задания](https://github.com/avito-tech/iOS-trainee-assignment-2024) на позицию iOS стажера в Авито.
@@ -99,7 +100,7 @@ P.S. Внутри приложения также к запросу добавл
 
 Во время ввода запроса в поисковую строку, значения для подсказок и истории достаются из `UserDefaults`, фильтруются и отображаются на экране. Во время запроса сохраняется текущий запрос в историю (`UserDefaults`), собираются все выбранные параметры (фильтры) и делается запрос с помощью `URLSession`. Если все прошло успешно, информация отображается на экране, если нет, то - ошибка. Картинки загружаются из интернета по мере прокрутки контента.
 
-<img style="display: block; margin-left: auto; margin-right: auto; width: 55%;" src="./Screenshots/Screens1.png" alt="SearchItems"/>
+<img style="display: block; margin-left: auto; margin-right: auto; width: 100%;" src="./Screenshots/Screens1.png" alt="SearchItems"/>
 
 
 ### Экран с детальной информацией о контенте
@@ -145,7 +146,7 @@ P.S. Внутри приложения также к запросу добавл
 
 После перехода на экран детальной информации делается запрос на получение изображения контента, [Lookup](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/LookupExamples.html#//apple_ref/doc/uid/TP40017632-CH7-SW1) запрос для получения дополнительной информации и ссылки на страницу в Apple. Также, если это запрос для music типа, то выполняется [Lookup](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/LookupExamples.html#//apple_ref/doc/uid/TP40017632-CH7-SW1) запрос для получения других альбомов автора. Для синхронизации получения данных используется `DispatchGroup`. Если все прошло успешно, информация отображается на экране. Если не хватает важной информации для отображения, то показывается ошибка. 
 
-<img style="display: block; margin-left: auto; margin-right: auto; width: 55%;" src="./Screenshots/Screens2.png" alt="ItemDetails"/>
+<img style="display: block; margin-left: auto; margin-right: auto; width: 70%;" src="./Screenshots/Screens2.png" alt="ItemDetails"/>
 
 
 ### Дополнительно:
@@ -154,7 +155,8 @@ P.S. Внутри приложения также к запросу добавл
 * Добавлена локализация на Русском и Английском языках в зависимости от выбранного языка на устройстве
 * Подготовлено для Unit-тестирования
 
-<img style="display: block; margin-left: auto; margin-right: auto; width: 35%;" src="./Screenshots/Screens3.png" alt="AdditionalFunctionality"/>
+<img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="./Screenshots/Screens3.png" alt="AdditionalFunctionality"/>
+
 
 
 ### Демо-видео
