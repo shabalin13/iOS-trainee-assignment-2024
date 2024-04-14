@@ -5,6 +5,8 @@
 //  Created by DIMbI4 on 05.04.2024.
 //
 
+import Foundation
+
 struct SearchItemsParameters {
     
     var term: String
@@ -19,16 +21,16 @@ struct SearchItemsParameters {
         self.country = .us
         self.mediaType = .music
         self.limit = .limit30
-        self.lang = "en_us"
+        self.lang = Locale.current.languageCode ?? "en_us"
         self.explicit = .yes
     }
     
-    init(term: String, country: Country = .us, mediaType: MediaType = .music, limit: Limit = .limit30, lang: String = "en_us", explicit: Explicit = .yes) {
+    init(term: String, country: Country = .us, mediaType: MediaType = .music, limit: Limit = .limit30, explicit: Explicit = .yes) {
         self.term = term
         self.country = country
         self.mediaType = mediaType
         self.limit = limit
-        self.lang = lang // later add localization
+        self.lang = Locale.current.languageCode ?? "en_us"
         self.explicit = explicit
     }
     

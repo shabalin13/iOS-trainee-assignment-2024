@@ -9,7 +9,7 @@ import UIKit
 
 protocol SearchFiltersViewControllerDelegate: AnyObject {
     
-    func didSelectFilters(selectedParameters: [String])
+    func didSelectFilters(selectedParametersIdxs: [Int])
     
 }
 
@@ -22,7 +22,7 @@ class SearchFiltersViewController: UIViewController {
     private lazy var applyButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("Показать результаты", for: .normal)
+        button.setTitle("filtersApplyButtonTitle".localize, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         button.backgroundColor = .systemBlue
@@ -60,7 +60,7 @@ class SearchFiltersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        navigationItem.title = "Фильтры"
+        navigationItem.title = "filtersControllerTitle".localize
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancel))
         setupView()
         configureView()
@@ -90,7 +90,6 @@ class SearchFiltersViewController: UIViewController {
         for displayedParameter in displayedParameters {
             let filterView = FilterView()
             filterView.configure(title: displayedParameter.title, allCases: displayedParameter.allCases, selected: displayedParameter.selected)
-            
             stackView.addArrangedSubview(filterView)
         }
     }
@@ -116,15 +115,15 @@ class SearchFiltersViewController: UIViewController {
             self.applyButton.transform = .identity
         }
         
-        var selectedParameters = [String]()
+        var selectedParametersIdxs = [Int]()
         for view in stackView.arrangedSubviews {
-            if let filterView = view as? FilterView, let selectedValue = filterView.getSelectedValue() {
-                selectedParameters.append(selectedValue)
+            if let filterView = view as? FilterView {
+                selectedParametersIdxs.append(filterView.getSelectedIdx())
             }
         }
 
         dismiss(animated: true) {
-            self.delegate?.didSelectFilters(selectedParameters: selectedParameters)
+            self.delegate?.didSelectFilters(selectedParametersIdxs: selectedParametersIdxs)
         }
     }
     

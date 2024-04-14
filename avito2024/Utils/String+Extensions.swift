@@ -8,6 +8,7 @@
 import Foundation
 
 extension String {
+    
     var htmlToString: String {
         guard let data = self.data(using: .utf8) else {
             return ""
@@ -19,4 +20,9 @@ extension String {
             return ""
         }
     }
+    
+    var localize: String {
+        return NSLocalizedString(self, comment: self)
+    }
+    
 }

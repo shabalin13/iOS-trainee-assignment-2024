@@ -77,7 +77,7 @@ final class ItemDetailsPresenter {
     
     // MAKR: - Data preparation
     private func prepareMusicItemDetails(imageData: Data?, authorName: String) -> DisplayedMusicItemDetails {
-        let trackNameLabelText = self.currentItem.trackName ?? "Unknown"
+        let trackNameLabelText = self.currentItem.trackName ?? "Unknown".localize
         let authorButtonText = authorName
         let genreLabelText = self.currentItem.primaryGenreName
         let isShowTrackViewButton = self.currentItem.trackViewURL != nil
@@ -92,7 +92,7 @@ final class ItemDetailsPresenter {
         } else if let type = self.currentItem.kind {
             bottomInfoLabelText += "\(type)"
         } else {
-            bottomInfoLabelText += "\(self.currentMediaType.entity)"
+            bottomInfoLabelText += "\(self.currentMediaType.entity.localize)"
         }
         let isShowExplitic = self.currentItem.trackExplicitness ?? false
         
@@ -101,7 +101,7 @@ final class ItemDetailsPresenter {
     }
     
     private func prepareEbookItemDetails(imageData: Data?, authorName: String) -> DisplayedEbookItemDetails {
-        let ebookNameLabelText = self.currentItem.trackName ?? "Unknown"
+        let ebookNameLabelText = self.currentItem.trackName ?? "Unknown".localize
         let authorButtonText = authorName
         let descriptionLabelText = self.currentItem.description
         let genresLabelText = concatGenres(genres: self.currentItem.genres)
@@ -120,7 +120,7 @@ final class ItemDetailsPresenter {
         } else if let type = self.currentItem.kind {
             bottomInfoLabelText += "\(type)"
         } else {
-            bottomInfoLabelText += "\(self.currentMediaType.entity)"
+            bottomInfoLabelText += "\(self.currentMediaType.entity.localize)"
         }
         
         let ebookItemDetails = DisplayedEbookItemDetails(imageData: imageData, ebookNameLabelText: ebookNameLabelText, authorButtonText: authorButtonText, descriptionLabelText: descriptionLabelText, genresLabelText: genresLabelText, isShowEbookViewButton: isShowEbookViewButton, bottomInfoLabelText: bottomInfoLabelText)
@@ -128,7 +128,7 @@ final class ItemDetailsPresenter {
     }
     
     private func prepareMovieItemDetails(imageData: Data?, authorName: String) -> DisplayedMovieItemDetails {
-        let movieNameLabelText = self.currentItem.trackName ?? "Unknown"
+        let movieNameLabelText = self.currentItem.trackName ?? "Unknown".localize
         let authorButtonText = authorName
         let descriptionLabelText = self.currentItem.longDescription
         let isShowMovieViewButton = self.currentItem.trackViewURL != nil
@@ -152,7 +152,7 @@ final class ItemDetailsPresenter {
         } else if let type = self.currentItem.kind {
             bottomInfoLabelText += "\(type)"
         } else {
-            bottomInfoLabelText += "\(self.currentMediaType.entity)"
+            bottomInfoLabelText += "\(self.currentMediaType.entity.localize)"
         }
         
         let movieItemDetails = DisplayedMovieItemDetails(imageData: imageData, movieNameLabelText: movieNameLabelText, authorButtonText: authorButtonText, descriptionLabelText: descriptionLabelText, isShowMovieViewButton: isShowMovieViewButton, bottomInfoLabelText: bottomInfoLabelText)
@@ -182,7 +182,7 @@ final class ItemDetailsPresenter {
     
     private func getDateString(date: Date) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM dd, yyyy"
+        dateFormatter.dateFormat = "dateFormat".localize
         return dateFormatter.string(from: date)
     }
     
@@ -236,19 +236,19 @@ extension ItemDetailsPresenter: ItemDetailsPresenterProtocol {
                     let musicItemDetails = self.prepareMusicItemDetails(imageData: imageData, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized, itemDetails: musicItemDetails)
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails)
                     }
                 case .ebook:
                     let ebookItemDetails = self.prepareEbookItemDetails(imageData: imageData, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized, itemDetails: ebookItemDetails)
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: ebookItemDetails)
                     }
                 case .movie:
                     let movieItemDetails = self.prepareMovieItemDetails(imageData: imageData, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized, itemDetails: movieItemDetails)
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: movieItemDetails)
                     }
                 }
             } else if let authorName = self.authorInfo?.authorName {
@@ -257,25 +257,25 @@ extension ItemDetailsPresenter: ItemDetailsPresenterProtocol {
                     let musicItemDetails = self.prepareMusicItemDetails(imageData: nil, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized, itemDetails: musicItemDetails)
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails)
                     }
                 case .ebook:
                     let ebookItemDetails = self.prepareEbookItemDetails(imageData: nil, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized, itemDetails: ebookItemDetails)
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: ebookItemDetails)
                     }
                 case .movie:
                     let movieItemDetails = self.prepareMovieItemDetails(imageData: nil, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized, itemDetails: movieItemDetails)
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: movieItemDetails)
                     }
                 }
             } else {
                 DispatchQueue.main.async {
                     self.view?.stopActivityIndicator()
-                    self.view?.showErrorView(title: "Error", error: "Not all data is available")
+                    self.view?.showErrorView(title: "errorTitle".localize, error: "lookupError".localize)
                 }
             }
         }

@@ -19,7 +19,6 @@ class FilterView: UIView {
     private let segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         let font = UIFont.systemFont(ofSize: 14)
-//        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         return segmentedControl
     }()
     
@@ -66,9 +65,8 @@ class FilterView: UIView {
     }
     
     // MARK: - Methods
-    func getSelectedValue() -> String? {
-        guard let selectedSegmentTitle = segmentedControl.titleForSegment(at: segmentedControl.selectedSegmentIndex) else { return nil }
-        return selectedSegmentTitle
+    func getSelectedIdx() -> Int {
+        return segmentedControl.selectedSegmentIndex
     }
     
 }

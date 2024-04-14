@@ -38,7 +38,7 @@ class MovieContentView: UIView {
         let label = UILabel()
         label.numberOfLines = 1
         label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.text = "Описание"
+        label.text = "descriptionTitle".localize
         return label
     }()
     
@@ -54,7 +54,7 @@ class MovieContentView: UIView {
         button.setTitleColor(.red, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.addTarget(self, action: #selector(movieViewButtonTapped), for: .touchUpInside)
-        button.setTitle(Constants.mediaButtonText, for: .normal)
+        button.setTitle("mediaButtonTitle".localize, for: .normal)
         return button
     }()
     

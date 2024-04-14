@@ -16,10 +16,6 @@ struct Item {
     let artistName: String?
     let artistViewURL: URL?
     
-    //    let collectionId: Int?
-    //    let collectionName: String?
-    //    let collectionViewURL: URL?
-    
     let trackId: Int?
     let trackName: String?
     let trackViewURL: URL?

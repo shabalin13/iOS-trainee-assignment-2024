@@ -114,7 +114,7 @@ extension ItemDetailsViewController: ItemDetailsViewControllerProtocol {
         navigationItem.title = title
         
         if itemDetails.isShowExplitic {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "e.square"), style: .plain, target: nil, action: nil)
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: Constants.explicitImageName), style: .plain, target: nil, action: nil)
             navigationItem.rightBarButtonItem?.tintColor = .gray
         }
 

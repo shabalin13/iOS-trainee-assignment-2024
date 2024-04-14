@@ -18,15 +18,15 @@ enum NetworkManagerError: Error, LocalizedError {
     var localizedDescription: String {
         switch self {
         case .createURLFailed:
-            return NSLocalizedString("Failed to create URL", comment: "")
+            return "createURLFailed".localize
         case .statusCodeFailed:
-            return NSLocalizedString("Got bad status code", comment: "")
+            return "statusCodeFailed".localize
         case .requestFailed:
-            return NSLocalizedString("Request failed", comment: "")
+            return "requestFailed".localize
         case .getDataFailed:
-            return NSLocalizedString("Failed to get data", comment: "")
+            return "getDataFailed".localize
         case .noInternetConnection:
-            return NSLocalizedString("No Internet connection", comment: "")
+            return "noInternetConnection".localize
         }
     }
     

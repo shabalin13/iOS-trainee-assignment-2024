@@ -42,7 +42,7 @@ class ItemCollectionViewCell: UICollectionViewCell {
     }()
     
     private lazy var explicitImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "e.square"))
+        let imageView = UIImageView(image: UIImage(systemName: Constants.explicitImageName))
         imageView.tintColor = .gray
         return imageView
     }()

@@ -108,15 +108,15 @@ class SearchItemsViewController: UIViewController {
     private func setupSearchController() {
         searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = "Поиск медиа-контента"
+        searchController.searchBar.placeholder = "searchControllerPlaceholder".localize
         searchController.searchBar.delegate = self
         searchController.showsSearchResultsController = true
     }
     
     private func setupNavigationBar() {
-        navigationItem.title = "Медиа-контент"
-        navigationItem.backButtonTitle = "Back"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "slider.horizontal.3"), style: .plain, target: self, action: #selector(goToFilters))
+        navigationItem.title = "searchControllerTitle".localize
+        navigationItem.backButtonTitle = "backButtonTitle".localize
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: Constants.filtersImageName), style: .plain, target: self, action: #selector(goToFilters))
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
@@ -228,8 +228,8 @@ extension SearchItemsViewController: SearchItemsViewControllerProtocol {
     
     func showErrorAlert(error: NetworkManagerError) {
         searchDone()
-        let alertController = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let alertController = UIAlertController(title: "errorAlertTitle".localize, message: error.localizedDescription, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK".localize, style: .default, handler: nil)
         alertController.addAction(okAction)
         present(alertController, animated: true, completion: nil)
     }
@@ -314,8 +314,8 @@ extension SearchItemsViewController: UICollectionViewDelegate {
 // MARK: - SearchFiltersViewControllerDelegate
 extension SearchItemsViewController: SearchFiltersViewControllerDelegate {
     
-    func didSelectFilters(selectedParameters: [String]) {
-        presenter.searchItems(selectedParameters: selectedParameters)
+    func didSelectFilters(selectedParametersIdxs: [Int]) {
+        presenter.searchItems(selectedParametersIdxs: selectedParametersIdxs)
     }
     
 }

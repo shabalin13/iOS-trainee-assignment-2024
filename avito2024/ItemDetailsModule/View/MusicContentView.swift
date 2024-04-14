@@ -51,7 +51,7 @@ class MusicContentView: UIView {
         button.setTitleColor(.red, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.addTarget(self, action: #selector(trackViewButtonTapped), for: .touchUpInside)
-        button.setTitle(Constants.mediaButtonText, for: .normal)
+        button.setTitle("mediaButtonTitle".localize, for: .normal)
         return button
     }()
     
@@ -153,3 +153,4 @@ class MusicContentView: UIView {
     }
     
 }
+

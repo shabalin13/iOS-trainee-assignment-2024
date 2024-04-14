@@ -22,4 +22,12 @@ enum MediaType: String, CaseIterable {
         }
     }
     
+    static func fromIdx(idx: Int) -> MediaType? {
+        let allCases = self.allCases
+        guard idx >= 0 && idx < allCases.count else {
+            return nil
+        }
+        return allCases[idx]
+    }
+    
 }

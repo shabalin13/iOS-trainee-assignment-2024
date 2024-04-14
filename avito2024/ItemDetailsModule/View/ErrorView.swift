@@ -11,7 +11,7 @@ class ErrorView: UIView {
     
     // MARK: - Properties
     private lazy var imageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "exclamationmark.triangle"))
+        let imageView = UIImageView(image: UIImage(systemName: Constants.errorImageName))
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .orange
         return imageView

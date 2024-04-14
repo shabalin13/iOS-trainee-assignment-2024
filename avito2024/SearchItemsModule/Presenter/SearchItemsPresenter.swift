@@ -11,7 +11,7 @@ import Foundation
 protocol SearchItemsPresenterProtocol {
     
     func searchItems(term: String)
-    func searchItems(selectedParameters: [String])
+    func searchItems(selectedParametersIdxs: [Int])
     func fetchItemImage(url: URL?, completionHandler: @escaping (Data) -> Void)
     func refreshSearchItems()
     func resetSearchItems()
@@ -59,18 +59,18 @@ final class SearchItemsPresenter {
             let explicit: Bool?
             switch currentSearchItemsParameters.mediaType {
             case .music:
-                secondaryLabelText = item.artistName ?? "Unknown"
+                secondaryLabelText = item.artistName ?? "Unknown".localize
                 if let trackTime = item.trackTime {
-                    descriptionLabelText = "\(MediaType.music.rawValue) • \(getTimeString(milliseconds: trackTime))"
+                    descriptionLabelText = "\(MediaType.music.rawValue.capitalized.localize) • \(getTimeString(milliseconds: trackTime))"
                 } else {
-                    descriptionLabelText = "\(MediaType.music.rawValue)"
+                    descriptionLabelText = "\(MediaType.music.rawValue.capitalized.localize)"
                 }
                 explicit = item.trackExplicitness ?? false
             case .movie:
                 if let genre = item.primaryGenreName {
-                    secondaryLabelText = "\(MediaType.movie.rawValue) • \(genre)"
+                    secondaryLabelText = "\(MediaType.movie.rawValue.capitalized.localize) • \(genre)"
                 } else {
-                    secondaryLabelText = "\(MediaType.movie.rawValue)"
+                    secondaryLabelText = "\(MediaType.movie.rawValue.capitalized.localize)"
                 }
                 if let releaseDate = item.releaseDate {
                     descriptionLabelText = "\(getDateString(date: releaseDate))"
@@ -79,15 +79,15 @@ final class SearchItemsPresenter {
                 }
                 explicit = nil
             case .ebook:
-                secondaryLabelText = item.artistName ?? "Unknown"
+                secondaryLabelText = item.artistName ?? "Unknown".localize
                 if let userRatingCount = item.userRatingCount, let averageUserRating = item.averageUserRating {
-                    descriptionLabelText = "\(MediaType.ebook.rawValue) • ★ \(averageUserRating) (\(userRatingCount))"
+                    descriptionLabelText = "\(MediaType.ebook.rawValue.capitalized.localize) • ★ \(averageUserRating) (\(userRatingCount))"
                 } else {
-                    descriptionLabelText = "\(MediaType.ebook.rawValue)"
+                    descriptionLabelText = "\(MediaType.ebook.rawValue.capitalized.localize)"
                 }
                 explicit = nil
             }
-            displayedItems.append(DisplayedItem(contentNameLabelText: item.trackName ?? "Unknown", secondaryLabelText: secondaryLabelText, descriptionLabelText: descriptionLabelText, explicit: explicit, imageURL: item.artworkURL))
+            displayedItems.append(DisplayedItem(contentNameLabelText: item.trackName ?? "Unknown".localize, secondaryLabelText: secondaryLabelText, descriptionLabelText: descriptionLabelText, explicit: explicit, imageURL: item.artworkURL))
         }
         return displayedItems
     }
@@ -101,7 +101,7 @@ final class SearchItemsPresenter {
     
     private func getDateString(date: Date) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMM dd, yyyy"
+        dateFormatter.dateFormat = "dateFormat".localize
         return dateFormatter.string(from: date)
     }
     
@@ -136,18 +136,18 @@ extension SearchItemsPresenter: SearchItemsPresenterProtocol {
         }
     }
     
-    func searchItems(selectedParameters: [String]) {
-        if selectedParameters.count == 4 {
-            if let mediaType = MediaType(rawValue: selectedParameters[0]) {
+    func searchItems(selectedParametersIdxs: [Int]) {
+        if selectedParametersIdxs.count == 4 {
+            if let mediaType = MediaType.fromIdx(idx: selectedParametersIdxs[0]) {
                 currentSearchItemsParameters.mediaType = mediaType
             }
-            if let explicit = Explicit(rawValue: selectedParameters[1]) {
+            if let explicit = Explicit.fromIdx(idx: selectedParametersIdxs[1]) {
                 currentSearchItemsParameters.explicit = explicit
             }
-            if let country = Country(rawValue: selectedParameters[2]) {
+            if let country = Country.fromIdx(idx: selectedParametersIdxs[2]) {
                 currentSearchItemsParameters.country = country
             }
-            if let limit = Limit(rawValue: selectedParameters[3]) {
+            if let limit = Limit.fromIdx(idx: selectedParametersIdxs[3]) {
                 currentSearchItemsParameters.limit = limit
             }
         }
@@ -241,10 +241,10 @@ extension SearchItemsPresenter: SearchItemsPresenterProtocol {
     
     func getSearchItemsParameters() {
         let displayedParameters: [DisplayedParameter] = [
-            DisplayedParameter(title: "Тип медиа-контента", allCases: MediaType.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.mediaType.rawValue),
-            DisplayedParameter(title: "Включать откровенный контент", allCases: Explicit.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.explicit.rawValue),
-            DisplayedParameter(title: "Страна магазина", allCases: Country.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.country.rawValue),
-            DisplayedParameter(title: "Лимит количества результатов", allCases: Limit.allCases.map( { $0.rawValue }), selected: currentSearchItemsParameters.limit.rawValue),
+            DisplayedParameter(title: "filtersMediaTypeTitle".localize, allCases: MediaType.allCases.map({ $0.rawValue.capitalized.localize }), selected: currentSearchItemsParameters.mediaType.rawValue.capitalized.localize),
+            DisplayedParameter(title: "filtersExplicitTitle".localize, allCases: Explicit.allCases.map({ $0.rawValue.capitalized.localize }), selected: currentSearchItemsParameters.explicit.rawValue.capitalized.localize),
+            DisplayedParameter(title: "filtersCountryTitle".localize, allCases: Country.allCases.map({ $0.rawValue }), selected: currentSearchItemsParameters.country.rawValue),
+            DisplayedParameter(title: "filtersLimitTitle".localize, allCases: Limit.allCases.map( { $0.rawValue }), selected: currentSearchItemsParameters.limit.rawValue),
         ]
         self.view?.showFiltersView(displayedParameters: displayedParameters)
     }
