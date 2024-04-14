@@ -36,8 +36,8 @@ iOS приложение для поиска медиа-контента и пр
 
 * [iTunes Search API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html#//apple_ref/doc/uid/TP40017632-CH3-SW1)
 * Swift + UIKit
-* URLSession для хранения
-* UserDefaults для networking
+* URLSession для networking
+* UserDefaults для хранения
 * GCD для многопоточности
 * MVP архитектура с Coordinator
 
@@ -68,7 +68,7 @@ iOS приложение для поиска медиа-контента и пр
 3) Страна магазина, в котором производить поиск (US - default или RU)
 4) Максимальное количество выдаваемых результатов (30 - default)
 
-P.S. Внутри приложения также к запросу добавляются entity к music - song, к movie - movie, к ebook - ebook. Если использовать остальные entity для данных типов, то они дают либо 1 результат, либо вообще ничего.
+P.S. Внутри приложения также к запросу добавляются entity к music - song, к movie - movie, к ebook - ebook.
 
 Сделать запрос можно, нажав кнопку Search на клавиатуре или выбрав нужный элемент из подсказок. Результаты отображаются на экране в виде 2 столбцов с краткой информацией о каждом медиа-контенте. Информация различается в зависимости от типа контента.
 
@@ -149,7 +149,7 @@ P.S. Внутри приложения также к запросу добавл
 
 После перехода на экран детальной информации делается запрос на получение изображения контента, [Lookup](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/LookupExamples.html#//apple_ref/doc/uid/TP40017632-CH7-SW1) запрос для получения дополнительной информации и ссылки на страницу в Apple. Также, если это запрос для music типа, то выполняется [Lookup](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/LookupExamples.html#//apple_ref/doc/uid/TP40017632-CH7-SW1) запрос для получения других альбомов автора. Для синхронизации получения данных используется `DispatchGroup`. Если все прошло успешно, информация отображается на экране. Если не хватает важной информации для отображения, то показывается ошибка. 
 
-<img style="display: block; margin-left: auto; margin-right: auto; width: 70%;" src="./Screenshots/Screens2.png" alt="ItemDetails"/>
+<img style="display: block; margin-left: auto; margin-right: auto; width: 80%;" src="./Screenshots/Screens2.png" alt="ItemDetails"/>
 
 <a id="additional-functionality"></a>
 ### Дополнительно:
@@ -158,11 +158,11 @@ P.S. Внутри приложения также к запросу добавл
 * Добавлена локализация на Русском и Английском языках в зависимости от выбранного языка на устройстве
 * Подготовлено для Unit-тестирования
 
-<img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="./Screenshots/Screens3.png" alt="AdditionalFunctionality"/>
+<img style="display: block; margin-left: auto; margin-right: auto; width: 65%;" src="./Screenshots/Screens3.png" alt="AdditionalFunctionality"/>
 
 <a id="demo-video"></a>
 ### Демо-видео
-Вы можете посмотреть видео-демонстрацию приложения в [Google Drive]().
+Вы можете посмотреть видео-демонстрацию приложения в [Google Drive](https://drive.google.com/file/d/1Mg4cIZZC84T7MeoUy5pQhjeGAyspKuFr/view?usp=sharing).
 
 <a id="questions-and-issues"></a>
 ## Вопросы/Проблемы
