@@ -82,7 +82,6 @@ class SearchResultsViewController: UIViewController {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        print("SearchResultsViewController deinit")
     }
     
 }

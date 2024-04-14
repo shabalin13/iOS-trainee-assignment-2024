@@ -19,17 +19,12 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        print("AppCoordinator start")
         let searchItemsCoordinator = SearchItemsCoordinator(parentCoordinator: self, navigationController: navigationController)
         childCoordinators.append(searchItemsCoordinator)
         searchItemsCoordinator.start()
         
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
-    }
-    
-    deinit {
-        print("AppCoordinator deinit")
     }
     
 }

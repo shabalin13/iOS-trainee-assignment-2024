@@ -131,8 +131,4 @@ class SearchFiltersViewController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     
-    deinit {
-        print("SearchFiltersViewController deinit")
-    }
-    
 }

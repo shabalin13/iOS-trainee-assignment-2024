@@ -26,7 +26,6 @@ final class SearchItemsCoordinator: Coordinator, SearchItemsCoordinatorProtocol 
     }
     
     func start() {
-        print("SearchItemsCoordinator start")
         let presenter = SearchItemsPresenter(coordinator: self)
         let viewController = SearchItemsViewController(presenter: presenter)
         presenter.setView(view: viewController)
@@ -45,10 +44,6 @@ final class SearchItemsCoordinator: Coordinator, SearchItemsCoordinatorProtocol 
         }) {
             childCoordinators.remove(at: index)
         }
-    }
-    
-    deinit {
-        print("SearchItemsCoordinator deinit")
     }
     
 }

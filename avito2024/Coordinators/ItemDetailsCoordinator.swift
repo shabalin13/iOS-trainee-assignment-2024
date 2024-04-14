@@ -29,7 +29,6 @@ final class ItemDetailsCoordinator: Coordinator, ItemDetailsCoordinatorProtocol 
     }
     
     func start() {
-        print("ItemDetailsCoordinator start")
         let presenter = ItemDetailsPresenter(coordinator: self, selectedMediaType: selectedMediaType, selectedItem: selectedItem)
         let viewController = ItemDetailsViewController(presenter: presenter)
         presenter.setView(view: viewController)
@@ -39,10 +38,6 @@ final class ItemDetailsCoordinator: Coordinator, ItemDetailsCoordinatorProtocol 
     func backToSearchItems() {
         guard let parent = parentCoordinator as? SearchItemsCoordinator else { return }
         parent.childDidFinish(childCoordinator: self)
-    }
-    
-    deinit {
-        print("ItemDetailsCoordinator deinit")
     }
     
 }

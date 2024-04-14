@@ -37,7 +37,6 @@ final class ItemDetailsPresenter {
         self.currentMediaType = selectedMediaType
         self.currentItem = selectedItem
         self.networkManager = NetworkManager()
-        print(self.currentItem)
     }
     
     // MARK: - Methods

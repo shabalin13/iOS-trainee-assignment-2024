@@ -62,11 +62,6 @@ class SearchItemsViewController: UIViewController {
     }
     
     // MARK: - ViewController lifecycle methods
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        //        setupView()
-//    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()

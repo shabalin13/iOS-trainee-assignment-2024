@@ -196,12 +196,10 @@ class MusicContentView: UIView {
     
     // MARK: - objc methods
     @objc private func authorButtonTapped() {
-        print("authorButtonTapped")
         delegate?.authorButtonTapped()
     }
     
     @objc private func trackViewButtonTapped() {
-        print("trackViewButtonTapped")
         delegate?.mediaViewButtonTapped()
     }
     

@@ -152,12 +152,10 @@ class MovieContentView: UIView {
     
     // MARK: - objc methods
     @objc private func authorButtonTapped() {
-        print("authorButtonTapped")
         delegate?.authorButtonTapped()
     }
     
     @objc private func movieViewButtonTapped() {
-        print("movieViewButtonTapped")
         delegate?.mediaViewButtonTapped()
     }
 

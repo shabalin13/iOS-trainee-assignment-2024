@@ -42,8 +42,6 @@ final class NetworkManager: NetworkManagerProtocol {
             return
         }
         
-        print(url)
-        
         var request = URLRequest(url: url)
         request.timeoutInterval = 10
         
@@ -108,8 +106,6 @@ final class NetworkManager: NetworkManagerProtocol {
             return
         }
         
-        print(url)
-        
         var request = URLRequest(url: url)
         request.timeoutInterval = 10
         
@@ -152,8 +148,6 @@ final class NetworkManager: NetworkManagerProtocol {
             completionHandler(.failure(.createURLFailed))
             return
         }
-        
-        print(url)
         
         var request = URLRequest(url: url)
         request.timeoutInterval = 10

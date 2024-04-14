@@ -14,4 +14,5 @@ struct Constants {
     static let explicitImageName = "e.square"
     static let filtersImageName = "slider.horizontal.3"
     static let errorImageName = "exclamationmark.triangle"
+    
 }

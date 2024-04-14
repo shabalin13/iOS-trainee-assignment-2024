@@ -171,12 +171,10 @@ class EbookContentView: UIView {
     
     // MARK: - objc methods
     @objc private func authorButtonTapped() {
-        print("authorButtonTapped")
         delegate?.authorButtonTapped()
     }
     
     @objc private func ebookViewButtonTapped() {
-        print("ebookViewButtonTapped")
         delegate?.mediaViewButtonTapped()
     }
 
