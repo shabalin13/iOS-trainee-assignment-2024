@@ -11,6 +11,7 @@ class MusicContentView: UIView {
     
     // MARK: - Properties
     weak var delegate: ContentViewDelegate?
+    private var albums: [DisplayedAlbum] = []
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -55,6 +56,25 @@ class MusicContentView: UIView {
         return button
     }()
     
+    private lazy var albumsNameLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        label.text = "albumsTitle".localize
+        return label
+    }()
+    
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 10
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
+    }()
+    
     private lazy var bottomInfoLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 2
@@ -82,7 +102,13 @@ class MusicContentView: UIView {
         addSubview(authorButton)
         addSubview(genreLabel)
         addSubview(trackViewButton)
+        addSubview(albumsNameLabel)
+        addSubview(collectionView)
         addSubview(bottomInfoLabel)
+        
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(AlbumCollectionViewCell.self, forCellWithReuseIdentifier: AlbumCollectionViewCell.reuseIdentifier)
         
         setupConstraints()
     }
@@ -93,6 +119,8 @@ class MusicContentView: UIView {
         authorButton.translatesAutoresizingMaskIntoConstraints = false
         genreLabel.translatesAutoresizingMaskIntoConstraints = false
         trackViewButton.translatesAutoresizingMaskIntoConstraints = false
+        albumsNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         bottomInfoLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -113,10 +141,18 @@ class MusicContentView: UIView {
             genreLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 50),
             genreLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -50),
             
-            trackViewButton.topAnchor.constraint(equalTo: genreLabel.bottomAnchor, constant: 30),
+            trackViewButton.topAnchor.constraint(equalTo: genreLabel.bottomAnchor, constant: 20),
             trackViewButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             
-            bottomInfoLabel.topAnchor.constraint(greaterThanOrEqualTo: trackViewButton.bottomAnchor, constant: 30),
+            albumsNameLabel.topAnchor.constraint(equalTo: trackViewButton.bottomAnchor, constant: 15),
+            albumsNameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            albumsNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            collectionView.topAnchor.constraint(equalTo: albumsNameLabel.bottomAnchor, constant: 10),
+            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            
+            bottomInfoLabel.topAnchor.constraint(greaterThanOrEqualTo: collectionView.bottomAnchor, constant: 30),
             bottomInfoLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             bottomInfoLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -30),
             bottomInfoLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
@@ -125,7 +161,7 @@ class MusicContentView: UIView {
     }
     
     // MARK: - Configuration
-    func configure(itemDetails: DisplayedMusicItemDetails) {
+    func configure(itemDetails: DisplayedMusicItemDetails, albums: [DisplayedAlbum]) {
         if let imageData = itemDetails.imageData {
             imageView.image = UIImage(data: imageData)
         }
@@ -138,6 +174,23 @@ class MusicContentView: UIView {
             genreLabel.isHidden = false
         }
         trackViewButton.isHidden = !itemDetails.isShowTrackViewButton
+        
+        self.albums = albums
+        if albums.isEmpty {
+            albumsNameLabel.isHidden = true
+            collectionView.isHidden = true
+            NSLayoutConstraint.activate([
+                collectionView.heightAnchor.constraint(equalToConstant: 0)
+            ])
+        } else {
+            albumsNameLabel.isHidden = false
+            collectionView.isHidden = false
+            NSLayoutConstraint.activate([
+                collectionView.heightAnchor.constraint(equalToConstant: 200)
+            ])
+            collectionView.reloadData()
+        }
+        
         bottomInfoLabel.text = itemDetails.bottomInfoLabelText
     }
     
@@ -154,3 +207,21 @@ class MusicContentView: UIView {
     
 }
 
+extension MusicContentView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return albums.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumCollectionViewCell.reuseIdentifier, for: indexPath) as! AlbumCollectionViewCell
+        let album = albums[indexPath.item]
+        cell.configureCell(album: album)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 150, height: collectionView.frame.height)
+    }
+
+}

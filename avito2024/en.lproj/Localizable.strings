@@ -41,6 +41,7 @@
 
 /* Content View */
 "descriptionTitle" = "Description";
+"albumsTitle" = "Albums";
 "mediaButtonTitle" = "Show in Apple";
 "lookupError" = "Not all data is available";
 "errorTitle" = "Error";

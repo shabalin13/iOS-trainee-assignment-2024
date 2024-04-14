@@ -13,6 +13,7 @@ protocol NetworkManagerProtocol {
     func searchItems(searchItemsParameters: SearchItemsParameters, completionHandler: @escaping (Result<Items, NetworkManagerError>) -> Void)
     func fetchItemImage(url: URL, completionHandler: @escaping (Result<Data, NetworkManagerError>) -> Void)
     func lookupById(id: Int, completionHandler: @escaping (Result<AuthorInfoResponse, NetworkManagerError>) -> Void)
+    func getAlbums(id: Int, limit: Int, completionHandler: @escaping (Result<Albums, NetworkManagerError>) -> Void)
     
 }
 
@@ -128,6 +129,51 @@ final class NetworkManager: NetworkManagerProtocol {
             let jsonDecoder = JSONDecoder()
             if let data = data, let authorInfoResponse = try? jsonDecoder.decode(AuthorInfoResponse.self, from: data) {
                 completionHandler(.success(authorInfoResponse))
+            } else {
+                completionHandler(.failure(.getDataFailed))
+            }
+            
+        }.resume()
+    }
+    
+    func getAlbums(id: Int, limit: Int, completionHandler: @escaping (Result<Albums, NetworkManagerError>) -> Void) {
+        guard isConnectedToInternet() else {
+            completionHandler(.failure(.noInternetConnection))
+            return
+        }
+        
+        var urlComponents = self.urlComponents
+        urlComponents.path = "/lookup"
+        urlComponents.queryItems = [URLQueryItem(name: "id", value: String(id)),
+                                    URLQueryItem(name: "entity", value: "album"),
+                                    URLQueryItem(name: "limit", value: String(limit)),]
+        
+        guard let url = urlComponents.url else {
+            completionHandler(.failure(.createURLFailed))
+            return
+        }
+        
+        print(url)
+        
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 10
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            
+            if let _ = error {
+                completionHandler(.failure(.requestFailed))
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                completionHandler(.failure(.statusCodeFailed))
+                return
+            }
+            
+            let jsonDecoder = JSONDecoder()
+            if let data = data, let albums = try? jsonDecoder.decode(Albums.self, from: data) {
+                completionHandler(.success(albums))
             } else {
                 completionHandler(.failure(.getDataFailed))
             }

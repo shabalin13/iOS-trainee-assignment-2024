@@ -18,7 +18,7 @@ protocol ItemDetailsViewControllerProtocol: AnyObject {
     
     func startActivityIndicator()
     func stopActivityIndicator()
-    func updateView(title: String, itemDetails: DisplayedMusicItemDetails)
+    func updateView(title: String, itemDetails: DisplayedMusicItemDetails, albums: [DisplayedAlbum])
     func updateView(title: String, itemDetails: DisplayedMovieItemDetails)
     func updateView(title: String, itemDetails: DisplayedEbookItemDetails)
     func showErrorView(title: String, error: String)
@@ -110,7 +110,7 @@ extension ItemDetailsViewController: ItemDetailsViewControllerProtocol {
         activityIndicator.stopAnimating()
     }
     
-    func updateView(title: String, itemDetails: DisplayedMusicItemDetails) {
+    func updateView(title: String, itemDetails: DisplayedMusicItemDetails, albums: [DisplayedAlbum]) {
         navigationItem.title = title
         
         if itemDetails.isShowExplitic {
@@ -118,7 +118,7 @@ extension ItemDetailsViewController: ItemDetailsViewControllerProtocol {
             navigationItem.rightBarButtonItem?.tintColor = .gray
         }
 
-        musicContentView.configure(itemDetails: itemDetails)
+        musicContentView.configure(itemDetails: itemDetails, albums: albums)
         musicContentView.delegate = self
         scrollView.addSubview(musicContentView)
         musicContentView.translatesAutoresizingMaskIntoConstraints = false

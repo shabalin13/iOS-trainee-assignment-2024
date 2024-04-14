@@ -41,6 +41,7 @@
 
 /* Content View */
 "descriptionTitle" = "Описание";
+"albumsTitle" = "Альбомы";
 "mediaButtonTitle" = "Показать в Apple";
 "lookupError" = "Не все данные доступны";
 "errorTitle" = "Ошибка";

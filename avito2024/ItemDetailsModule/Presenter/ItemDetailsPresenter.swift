@@ -29,6 +29,7 @@ final class ItemDetailsPresenter {
     
     private var authorInfo: AuthorInfo?
     private var imageData: Data?
+    private var albums: Albums?
     
     // MARK: - Initializers
     init(coordinator: ItemDetailsCoordinatorProtocol, selectedMediaType: MediaType, selectedItem: Item) {
@@ -71,6 +72,33 @@ final class ItemDetailsPresenter {
                     self.authorInfo = nil
                 }
                 group.leave()
+            }
+        }
+    }
+    
+    private func getAlbums(id: Int, group: DispatchGroup) {
+        DispatchQueue.global().async {
+            self.networkManager.getAlbums(id: id, limit: 5) { result in
+                switch result {
+                case .success(let albums):
+                    self.albums = albums
+                case .failure(_):
+                    self.albums = nil
+                }
+                group.leave()
+            }
+        }
+    }
+    
+    private func fetchAlbumImage(url: URL, completionHandler: @escaping (Data?) -> Void) {
+        DispatchQueue.global().async {
+            self.networkManager.fetchItemImage(url: url) { result in
+                switch result {
+                case .success(let imageData):
+                    completionHandler(imageData)
+                case .failure(_):
+                    completionHandler(nil)
+                }
             }
         }
     }
@@ -213,13 +241,20 @@ extension ItemDetailsPresenter: ItemDetailsPresenterProtocol {
         let group = DispatchGroup()
         
         switch currentMediaType {
-        case .music, .ebook:
+        case .music:
             if let id = currentItem.artistId {
                 group.enter()
                 getAuthorInfo(id: id, group: group)
+                group.enter()
+                getAlbums(id: id, group: group)
             }
         case .movie:
             if let id = currentItem.collectionArtistId {
+                group.enter()
+                getAuthorInfo(id: id, group: group)
+            }
+        case .ebook:
+            if let id = currentItem.artistId {
                 group.enter()
                 getAuthorInfo(id: id, group: group)
             }
@@ -230,52 +265,99 @@ extension ItemDetailsPresenter: ItemDetailsPresenterProtocol {
         }
         
         group.notify(queue: .global()) {
-            if let imageData = self.imageData, let authorName = self.authorInfo?.authorName {
-                switch self.currentMediaType {
-                case .music:
-                    let musicItemDetails = self.prepareMusicItemDetails(imageData: imageData, authorName: authorName)
-                    DispatchQueue.main.async {
-                        self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails)
+            switch self.currentMediaType {
+            case .music:
+                if let albums = self.albums?.results, albums.count > 1 {
+                    let imageGroup = DispatchGroup()
+                    var displayedAlbums = [DisplayedAlbum]()
+                    for album in albums {
+                        if let artistName = album.artistName, let collectionName = album.collectionName, let artworkURL = album.artworkURL {
+                            imageGroup.enter()
+                            self.fetchAlbumImage(url: artworkURL) { imageData in
+                                if let imageData = imageData {
+                                    displayedAlbums.append(DisplayedAlbum(imageData: imageData, albumLabelText: collectionName, authorLabelText: artistName))
+                                }
+                                imageGroup.leave()
+                            }
+                        }
                     }
-                case .ebook:
+                    imageGroup.notify(queue: .global()) {
+                        if let imageData = self.imageData, let authorName = self.authorInfo?.authorName {
+                            let musicItemDetails = self.prepareMusicItemDetails(imageData: imageData, authorName: authorName)
+                            DispatchQueue.main.async {
+                                self.view?.stopActivityIndicator()
+                                self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails, albums: displayedAlbums)
+                            }
+                        } else if let authorName = self.authorInfo?.authorName {
+                            let musicItemDetails = self.prepareMusicItemDetails(imageData: nil, authorName: authorName)
+                            DispatchQueue.main.async {
+                                self.view?.stopActivityIndicator()
+                                self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails, albums: displayedAlbums)
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                self.view?.stopActivityIndicator()
+                                self.view?.showErrorView(title: "errorTitle".localize, error: "lookupError".localize)
+                            }
+                        }
+                    }
+                } else {
+                    if let imageData = self.imageData, let authorName = self.authorInfo?.authorName {
+                        let musicItemDetails = self.prepareMusicItemDetails(imageData: imageData, authorName: authorName)
+                        DispatchQueue.main.async {
+                            self.view?.stopActivityIndicator()
+                            self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails, albums: [])
+                        }
+                    } else if let authorName = self.authorInfo?.authorName {
+                        let musicItemDetails = self.prepareMusicItemDetails(imageData: nil, authorName: authorName)
+                        DispatchQueue.main.async {
+                            self.view?.stopActivityIndicator()
+                            self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails, albums: [])
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.view?.stopActivityIndicator()
+                            self.view?.showErrorView(title: "errorTitle".localize, error: "lookupError".localize)
+                        }
+                    }
+                }
+            case .ebook:
+                if let imageData = self.imageData, let authorName = self.authorInfo?.authorName {
                     let ebookItemDetails = self.prepareEbookItemDetails(imageData: imageData, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
                         self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: ebookItemDetails)
                     }
-                case .movie:
-                    let movieItemDetails = self.prepareMovieItemDetails(imageData: imageData, authorName: authorName)
-                    DispatchQueue.main.async {
-                        self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: movieItemDetails)
-                    }
-                }
-            } else if let authorName = self.authorInfo?.authorName {
-                switch self.currentMediaType {
-                case .music:
-                    let musicItemDetails = self.prepareMusicItemDetails(imageData: nil, authorName: authorName)
-                    DispatchQueue.main.async {
-                        self.view?.stopActivityIndicator()
-                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: musicItemDetails)
-                    }
-                case .ebook:
+                } else if let authorName = self.authorInfo?.authorName {
                     let ebookItemDetails = self.prepareEbookItemDetails(imageData: nil, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
                         self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: ebookItemDetails)
                     }
-                case .movie:
+                } else {
+                    DispatchQueue.main.async {
+                        self.view?.stopActivityIndicator()
+                        self.view?.showErrorView(title: "errorTitle".localize, error: "lookupError".localize)
+                    }
+                }
+            case .movie:
+                if let imageData = self.imageData, let authorName = self.authorInfo?.authorName {
+                    let movieItemDetails = self.prepareMovieItemDetails(imageData: imageData, authorName: authorName)
+                    DispatchQueue.main.async {
+                        self.view?.stopActivityIndicator()
+                        self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: movieItemDetails)
+                    }
+                } else if let authorName = self.authorInfo?.authorName {
                     let movieItemDetails = self.prepareMovieItemDetails(imageData: nil, authorName: authorName)
                     DispatchQueue.main.async {
                         self.view?.stopActivityIndicator()
                         self.view?.updateView(title: self.currentMediaType.rawValue.capitalized.localize, itemDetails: movieItemDetails)
                     }
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.view?.stopActivityIndicator()
-                    self.view?.showErrorView(title: "errorTitle".localize, error: "lookupError".localize)
+                } else {
+                    DispatchQueue.main.async {
+                        self.view?.stopActivityIndicator()
+                        self.view?.showErrorView(title: "errorTitle".localize, error: "lookupError".localize)
+                    }
                 }
             }
         }
